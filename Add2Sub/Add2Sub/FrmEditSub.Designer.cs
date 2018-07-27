@@ -1,6 +1,6 @@
 ﻿namespace Add2Sub
 {
-    partial class Form1
+    partial class FrmEditSub
     {
         /// <summary>
         /// Required designer variable.
@@ -129,7 +129,7 @@
             this.label3.TabIndex = 9;
             this.label3.Text = "Title : ";
             // 
-            // Form1
+            // FrmEditSub
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -144,8 +144,9 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtVietsub);
             this.Controls.Add(this.txtEngsub);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "FrmEditSub";
+            this.Text = "Edit Subsence";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.ResumeLayout(false);
             this.PerformLayout();
 

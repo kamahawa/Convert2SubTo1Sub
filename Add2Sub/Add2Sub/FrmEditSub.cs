@@ -13,10 +13,10 @@ using System.Windows.Forms;
 
 namespace Add2Sub
 {
-    public partial class Form1 : Form
+    public partial class FrmEditSub : Form
     {
         string title = "";
-        public Form1()
+        public FrmEditSub()
         {
             InitializeComponent();
         }
@@ -38,7 +38,7 @@ namespace Add2Sub
             string textSub = "";
             // Create an instance of the open file dialog box.
             OpenFileDialog op = new OpenFileDialog();
-            op.InitialDirectory = @"E:\Friends";
+            op.InitialDirectory = @"E:\english\Friends\Friends Season 1 COMPLETE 720p.BRrip.sujaidr (pimprg)";//"E:\Friends";
             // Set filter options and filter index.
             op.Filter = "Text Files (.srt)|*.srt|All Files (*.*)|*.*";
             op.FilterIndex = 1;
@@ -216,7 +216,7 @@ namespace Add2Sub
                 }
 
                 //Save the document
-                object filename = @"E:\Friends\documents\"+ txtTitle.Text +".docx";
+                object filename = @"E:\english\Friends\Friends Season 1 COMPLETE 720p.BRrip.sujaidr (pimprg)\" + txtTitle.Text + ".docx";//"E:\Friends\documents\"+ txtTitle.Text +".docx";
                 document.SaveAs2(ref filename);
                 document.Close(ref missing, ref missing, ref missing);
                 document = null;

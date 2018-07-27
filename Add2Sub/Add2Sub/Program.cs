@@ -16,7 +16,8 @@ namespace Add2Sub
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Convert2SubTo1Sub());
+            Application.Run(new FrmMain());
+            //Application.Run(new Form1());
         }
     }
 }
