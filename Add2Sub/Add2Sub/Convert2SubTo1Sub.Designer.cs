@@ -36,6 +36,7 @@
             this._btnProgress = new System.Windows.Forms.Button();
             this._lv2Sub = new System.Windows.Forms.ListView();
             this._pbSub = new System.Windows.Forms.ProgressBar();
+            this._btnExport = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _btnLoadEngSub
@@ -111,11 +112,22 @@
             this._pbSub.Size = new System.Drawing.Size(256, 23);
             this._pbSub.TabIndex = 3;
             // 
+            // _btnExport
+            // 
+            this._btnExport.Location = new System.Drawing.Point(741, 11);
+            this._btnExport.Name = "_btnExport";
+            this._btnExport.Size = new System.Drawing.Size(177, 23);
+            this._btnExport.TabIndex = 4;
+            this._btnExport.Text = "Export";
+            this._btnExport.UseVisualStyleBackColor = true;
+            this._btnExport.Click += new System.EventHandler(this._btnExport_Click);
+            // 
             // Convert2SubTo1Sub
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1370, 749);
+            this.Controls.Add(this._btnExport);
             this.Controls.Add(this._pbSub);
             this.Controls.Add(this._lv2Sub);
             this.Controls.Add(this._lvSub);
@@ -139,5 +151,6 @@
         private System.Windows.Forms.ColumnHeader VietSub;
         private System.Windows.Forms.ListView _lv2Sub;
         private System.Windows.Forms.ProgressBar _pbSub;
+        private System.Windows.Forms.Button _btnExport;
     }
 }

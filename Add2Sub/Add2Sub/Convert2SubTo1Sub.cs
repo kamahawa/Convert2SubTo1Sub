@@ -16,6 +16,9 @@ namespace Add2Sub
     {
         SubtitlesHelper _shEng, _shViet;
 
+        List<Subtitle> Eng;
+        List<Subtitle> Viet;
+
         public Convert2SubTo1Sub()
         {
             InitializeComponent();            
@@ -38,6 +41,12 @@ namespace Add2Sub
                 if (op.ShowDialog() == DialogResult.OK)
                 {
                     _shEng = new SubtitlesHelper(op.FileName);
+                    Eng = _shEng.getSub();
+                    for(int i = 0; i < Eng.Count; i++)
+                    {
+                        _lvSub.Items.Add(Eng[i].Content);
+                    }
+                       
                 }
             }
             catch (Exception ex)
@@ -63,6 +72,11 @@ namespace Add2Sub
                 if (op.ShowDialog() == DialogResult.OK)
                 {
                     _shViet = new SubtitlesHelper(op.FileName);
+                    Viet = _shViet.getSub();
+                    for (int i = 0; i < Viet.Count; i++)
+                    {
+                        _lvSub.Items.Add(Viet[i].Content);
+                    }
                 }
             }
             catch (Exception ex)
@@ -75,19 +89,21 @@ namespace Add2Sub
         {
             progress();
         }
+
+        private void _btnExport_Click(object sender, EventArgs e)
+        {
+            Export2Excel();
+        }
         #endregion
 
         #region progress
-        
+
         void progress()
         {
             try
             {
                 // so thu tu cua sub, bat dau bang 1
                 //string sub = "";
-
-                List<Subtitle> Eng = _shEng.getSub();
-                List<Subtitle> Viet = _shViet.getSub();
                 
                 _pbSub.Maximum = Eng.Count;
 
@@ -115,6 +131,48 @@ namespace Add2Sub
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void Export2Excel()
+        {
+            try
+            {
+                //lvPDF is nothing but the listview control name
+                string[] st = new string[_lv2Sub.Columns.Count];
+                DirectoryInfo di = new DirectoryInfo(@"D:\PDFExtraction\");
+                if (di.Exists == false)
+                    di.Create();
+                StreamWriter sw = new StreamWriter(@"D:\PDFExtraction\sub.xls", false);
+                sw.AutoFlush = true;
+                for (int col = 0; col < _lv2Sub.Columns.Count; col++)
+                {
+                    sw.Write("\t" + _lv2Sub.Columns[col].Text.ToString());
+                }
+
+                int rowIndex = 1;
+                int row = 0;
+                string st1 = "";
+                for (row = 0; row < _lv2Sub.Items.Count; row++)
+                {
+                    if (rowIndex <= _lv2Sub.Items.Count)
+                        rowIndex++;
+                    st1 = "\n";
+                    for (int col = 0; col < _lv2Sub.Columns.Count; col++)
+                    {
+                        st1 = st1 + "\t" + "'" + _lv2Sub.Items[row].SubItems[col].Text.ToString();
+                    }
+                    sw.WriteLine(st1);
+                }
+                sw.Close();
+                FileInfo fil = new FileInfo(@"c:\PDFExtraction\sub.xls");
+                if (fil.Exists == true)
+                    MessageBox.Show("Process Completed", "Export to Excel", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        
         #endregion
     }
 }
