@@ -9,26 +9,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 
 namespace Add2Sub
 {
     public partial class FrmMain : Form
     {
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-        public int MakeLong(short lowPart, short highPart)
-        {
-            return (int)(((ushort)lowPart) | (uint)(highPart << 16));
-        }
-
-        public void ListViewItem_SetSpacing(ListView listview, short leftPadding, short topPadding)
-        {
-            const int LVM_FIRST = 0x1000;
-            const int LVM_SETICONSPACING = LVM_FIRST + 53;
-            SendMessage(listview.Handle, LVM_SETICONSPACING, IntPtr.Zero, (IntPtr)MakeLong(leftPadding, topPadding));
-        }
+        OpenFileDialog op;
 
         public FrmMain()
         {
@@ -82,22 +68,23 @@ namespace Add2Sub
             {
                 List<Subtitle> sub = new List<Subtitle>();
                 List<Subtitle> sub1 = new List<Subtitle>();
-                OpenFileDialog op = new OpenFileDialog();
+                op = new OpenFileDialog();
                 op.Multiselect = true;
                 if (DialogResult.OK == op.ShowDialog())
                 {
                     if(op.FileNames.Length > 1)
                     {
+                        _lvSub.Items.Clear();
                         //load 2 sub
                         SubtitlesHelper subHelper = new SubtitlesHelper(op.FileNames[0]);
                         sub = subHelper.getSub();
                         SubtitlesHelper subHelper1 = new SubtitlesHelper(op.FileNames[1]);
                         sub1 = subHelper1.getSub();
-                        LoadSub(sub);
-                        LoadSub(sub1);
+                        LoadSub(sub, sub1);
                     }
                     else if (op.FileNames.Length == 1)
                     {
+                        _lvSub.Items.Clear();
                         SubtitlesHelper subHelper = new SubtitlesHelper(op.FileNames[0]);
                         sub = subHelper.getSub();
                     }
@@ -109,33 +96,45 @@ namespace Add2Sub
             }
         }
 
-        private void LoadSub(List<Subtitle> sub)
+        private void LoadSub(List<Subtitle> sub, List<Subtitle> sub1)
         {
-            ListViewItem_SetSpacing(_lvSub, 432 + 32, 599 + 16);
             for (int i = 0; i < sub.Count; i++)
             {
-                string content = sub[i].Content;
-                try
+                _lvSub.Items.Add(sub[i].Content);
+                for (int j = 0; j < sub1.Count; j++)
                 {
-                    content = ReplaceTag(content);                                       
+                    TimeSpan tem = sub[i].StartShow.Subtract(sub1[j].StartShow);
+                    if (tem.TotalSeconds <= 1 && tem.TotalSeconds >= -1)
+                    {
+                        var item = _lvSub.Items.Add(sub1[j].Content);
+                        item.BackColor = Color.Beige;
+                    }
                 }
-                catch(Exception ex)
-                { }
-                var item = _lvSub.Items.Add(content);
-                item.BackColor = (_lvSub.Items.Count % 2 == 0) ? Color.Beige : Color.White;
             }
+        }        
+
+        private void convertSubToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Convert2SubTo1Sub frm = new Convert2SubTo1Sub();
+            //frm.MdiParent = this;
+            frm.ShowDialog();
         }
 
-        private string ReplaceTag(string content)
+        private void changeSubLoadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            while (content.Contains("<") && content.Contains(">"))
+            //change order 2 sub
+            if (op.FileNames.Length > 1)
             {
-                int start = content.IndexOf("<");
-                int end = content.IndexOf(">");
-                string result = content.Substring(start, end - start + 1);
-                content = content.Replace(result, "");
+                _lvSub.Items.Clear();
+                List<Subtitle> sub = new List<Subtitle>();
+                List<Subtitle> sub1 = new List<Subtitle>();
+                //load 2 sub
+                SubtitlesHelper subHelper = new SubtitlesHelper(op.FileNames[1]);
+                sub = subHelper.getSub();
+                SubtitlesHelper subHelper1 = new SubtitlesHelper(op.FileNames[0]);
+                sub1 = subHelper1.getSub();
+                LoadSub(sub, sub1);
             }
-            return content;
         }
     }
 }

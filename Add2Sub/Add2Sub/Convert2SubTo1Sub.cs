@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Add2Sub.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,18 +14,11 @@ namespace Add2Sub
 {
     public partial class Convert2SubTo1Sub : Form
     {
-
-        string textEngSub = "";
-        string textVietSub = "";
-
-        List<string> _lstSubEng, _lstSubViet;
+        SubtitlesHelper _shEng, _shViet;
 
         public Convert2SubTo1Sub()
         {
-            InitializeComponent();
-
-            _lstSubEng = new List<string>();
-            _lstSubViet = new List<string>();
+            InitializeComponent();            
         }
 
         #region event
@@ -32,7 +26,6 @@ namespace Add2Sub
         {
             try
             {
-                //textEngSub = LoadSub();
                 OpenFileDialog op = new OpenFileDialog();
                 //op.InitialDirectory = @"E:\Friends";
                 // Set filter options and filter index.
@@ -44,20 +37,7 @@ namespace Add2Sub
                 // Process input if the user clicked OK.
                 if (op.ShowDialog() == DialogResult.OK)
                 {
-                    try
-                    {
-                        StreamReader sr = new StreamReader(op.FileName);
-                        string line;
-                        while ((line = sr.ReadLine()) != null)
-                        {
-                            //_lvSub.Items.Add(line);
-                            _lstSubEng.Add(line);
-                        }
-                    }
-                    catch (IOException)
-                    {
-
-                    }
+                    _shEng = new SubtitlesHelper(op.FileName);
                 }
             }
             catch (Exception ex)
@@ -82,20 +62,7 @@ namespace Add2Sub
                 // Process input if the user clicked OK.
                 if (op.ShowDialog() == DialogResult.OK)
                 {
-                    try
-                    {
-                        StreamReader sr = new StreamReader(op.FileName);
-                        string line;
-                        while ((line = sr.ReadLine()) != null)
-                        {
-                            //_lvSub.Items.Add(line);
-                            _lstSubViet.Add(line);
-                        }
-                    }
-                    catch (IOException)
-                    {
-
-                    }
+                    _shViet = new SubtitlesHelper(op.FileName);
                 }
             }
             catch (Exception ex)
@@ -111,82 +78,37 @@ namespace Add2Sub
         #endregion
 
         #region progress
-
-        string LoadSub()
-        {
-            string sub = "";
-            // Create an instance of the open file dialog box.
-            OpenFileDialog op = new OpenFileDialog();
-            //op.InitialDirectory = @"E:\Friends";
-            // Set filter options and filter index.
-            op.Filter = "Text Files (.srt)|*.srt|All Files (*.*)|*.*";
-            op.FilterIndex = 1;
-
-            //op.Multiselect = true;
-
-            // Process input if the user clicked OK.
-            if (op.ShowDialog() == DialogResult.OK)
-            {
-                string file = op.FileName;
-                try
-                {
-                    sub = File.ReadAllText(file);
-                }
-                catch (IOException)
-                {
-
-                }
-            }
-            return sub;
-        }
-
+        
         void progress()
         {
             try
             {
                 // so thu tu cua sub, bat dau bang 1
-                int sttSubEng = 1;
-                int sttSubViet = 1;
-                int lineOld = 0;
-                string s = "";
-                for (int i = 0; i < _lstSubEng.Count; i++)
+                //string sub = "";
+
+                List<Subtitle> Eng = _shEng.getSub();
+                List<Subtitle> Viet = _shViet.getSub();
+                
+                _pbSub.Maximum = Eng.Count;
+
+                for (int i = 0; i < Eng.Count; i++)
                 {
-                    if (Int32.TryParse(_lstSubEng.ElementAt(i), out sttSubEng))
+                    //sub += Eng[i].Content + "\r\n";
+                    _lv2Sub.Items.Add(Eng[i].Content);
+                    for (int j = 0; j < Viet.Count; j++)
                     {
-                        for(int j = lineOld; j < _lstSubViet.Count; j++)
+                        TimeSpan tem = Eng[i].StartShow.Subtract(Viet[j].StartShow);
+                        if(tem.TotalSeconds <= 1 && tem.TotalSeconds >= -1)
                         {
-                            if (Int32.TryParse(_lstSubViet.ElementAt(j), out sttSubViet))
-                            {
-
-
-
-                                i += 2;
-                                s += _lstSubEng.ElementAt(i);
-                                _lvSub.Items.Add(_lstSubEng.ElementAt(i));
-                                while(_lstSubEng.ElementAt(++i) != "")
-                                {
-                                    s += _lstSubEng.ElementAt(i);
-                                    _lvSub.Items.Add(_lstSubEng.ElementAt(i));
-                                }
-                                //Cong xuong dong
-                                s += "\r\n";
-
-                                j += 2;
-                                s += _lstSubViet.ElementAt(j);
-                                _lvSub.Items.Add(_lstSubViet.ElementAt(j));
-                                while (_lstSubViet.ElementAt(++j) != "")
-                                {
-                                    s += _lstSubViet.ElementAt(j);
-                                    _lvSub.Items.Add(_lstSubViet.ElementAt(j));
-                                }
-                                s += "\r\n";
-                                lineOld = j;
-                                break;
-                            }
+                            //sub += Viet[j].Content + "\r\n";
+                            var item = _lv2Sub.Items.Add(Viet[j].Content);
+                            item.BackColor = Color.Beige;
                         }
                     }
+                    _pbSub.Value = i;
                 }
-                _txtSub.Text = s;
+                
+                //_txtSub.Text = sub;
             }
             catch(Exception ex)
             {

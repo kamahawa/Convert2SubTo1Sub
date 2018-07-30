@@ -42,6 +42,8 @@ namespace Add2Sub.Model
                             content += lstTemp[i];
                         }
 
+                        content = ReplaceTag(content);
+
                         Subtitle sub = new Subtitle(Int32.Parse(lstTemp[0]), startTime, endTime, content);
                         lstSub.Add(sub);
                     }
@@ -61,6 +63,18 @@ namespace Add2Sub.Model
         public List<Subtitle> getSub()
         {
             return lstSub;
+        }
+
+        public static string ReplaceTag(string content)
+        {
+            while (content.Contains("<") && content.Contains(">"))
+            {
+                int start = content.IndexOf("<");
+                int end = content.IndexOf(">");
+                string result = content.Substring(start, end - start + 1);
+                content = content.Replace(result, "");
+            }
+            return content;
         }
     }
 }
