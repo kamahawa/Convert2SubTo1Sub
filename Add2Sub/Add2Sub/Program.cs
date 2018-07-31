@@ -16,7 +16,7 @@ namespace Add2Sub
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmMain());
+            Application.Run(new FrmTranslate());
             //Application.Run(new Form1());
         }
     }
